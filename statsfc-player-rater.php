@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Player Rater
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Player Rater
-Version: 1.0.1
+Version: 1.0.2
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -166,7 +166,7 @@ class StatsFC_PlayerRater extends WP_Widget {
 					<tbody>
 						<?php
 						$cookie_id	= 'statsfc_playerrater_' . $api_key . '_' . $match->id . '_' . $team->id;
-						$cookie		= (isset($_SESSION[$cookie_id]) ? json_decode($_SESSION[$cookie_id]) : null);
+						$cookie		= (isset($_COOKIE[$cookie_id]) ? json_decode(stripslashes($_COOKIE[$cookie_id])) : null);
 
 						foreach ($players as $player) {
 						?>
@@ -188,7 +188,7 @@ class StatsFC_PlayerRater extends WP_Widget {
 									<?php
 									if (! is_null($cookie)) {
 									?>
-										<span><?php echo esc_attr($cookie[$player->id]); ?></span>
+										<span><?php echo esc_attr($cookie->{$player->id}); ?></span>
 									<?php
 									} else {
 									?>
