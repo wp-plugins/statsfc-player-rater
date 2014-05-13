@@ -1,6 +1,6 @@
-.statsfc_playerrater table {					display: table; width: 100%; border-collapse: collapse; border: 1px solid silver; }
+.statsfc_playerrater table {					display: table; width: 100%; border-collapse: collapse; }
 .statsfc_playerrater th,
-.statsfc_playerrater td {						text-align: left; padding: 2px 5px; border-top: 1px solid silver; }
+.statsfc_playerrater td {						text-align: left; padding: 2px 5px; }
 .statsfc_playerrater thead th {					text-transform: uppercase; font-size: small; background-color: silver; }
 .statsfc_playerrater .statsfc_player {			width: 75%; }
 .statsfc_playerrater .statsfc_average {			padding-left: 10px; }

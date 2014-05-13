@@ -4,7 +4,7 @@ Donate link:
 Tags: widget, football, soccer, player, rater, premier league, fa cup, league cup, champions league, europa league, uefa
 Requires at least: 3.3
 Tested up to: 3.9
-Stable tag: 1.0.2
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,8 @@ If you want to place the widget into a page rather than a sidebar:
 == Changelog ==
 
 **1.0.2**: Fixed a cookie bug.
+
+**1.1**: Added a `date` parameter.
 
 == Upgrade notice ==
 
