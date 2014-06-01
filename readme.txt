@@ -4,7 +4,7 @@ Donate link:
 Tags: widget, football, soccer, player, rater, premier league, fa cup, league cup, champions league, europa league, uefa
 Requires at least: 3.3
 Tested up to: 3.9
-Stable tag: 1.1
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,15 +21,14 @@ For a demo, check out [wp.statsfc.com](http://wp.statsfc.com).
 1. Upload the `statsfc-player-rater` folder and all files to the `/wp-content/plugins/` directory
 2. Activate the widget through the 'Plugins' menu in WordPress
 3. Drag the widget to the relevant sidebar on the 'Widgets' page in WordPress
-4. Set the API key and any other options. If you don't have any API key, sign up for free at statsfc.com
+4. Set the StatsFC key and any other options. If you don't have a key, sign up for free at [statsfc.com](https://statsfc.com)
 
-If you want to place the widget into a page rather than a sidebar:
+You can also use the `[statsfc-player-rater]` shortcode, with the following options:
 
-1. Install and activate 'Widgets on Pages' from the 'Plugins' menu in WordPress
-2. Add a sidebar named "StatsFC Player Rater" from the 'Settings > Widgets on Pages' menu in WordPress
-3. Place the widget anywhere in a page, using the following code:
-
-		[widgets_on_pages id="StatsFC Player Rater"]
+- `key` (required): Your StatsFC key
+- `team` (required): Team name, e.g., `Liverpool`
+- `date` (optional): For a back-dated match, e.g., `2013-12-31`
+- `default_css` (optional): Use the default widget styles, `true` or `false`
 
 == Frequently asked questions ==
 
@@ -44,6 +43,8 @@ If you want to place the widget into a page rather than a sidebar:
 **1.0.2**: Fixed a cookie bug.
 
 **1.1**: Added a `date` parameter.
+
+**1.2**: Added `[statsfc-player-rater]` shortcode.
 
 == Upgrade notice ==
 

@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Player Rater
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Player Rater
-Version: 1.1
+Version: 1.2
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -32,6 +32,16 @@ define('STATSFC_PLAYERRATER_NAME',	'StatsFC Player Rater');
  * Adds StatsFC widget.
  */
 class StatsFC_PlayerRater extends WP_Widget {
+	public $isShortcode = false;
+
+	private static $defaults = array(
+		'title'			=> '',
+		'key'			=> '',
+		'team'			=> '',
+		'date'			=> '',
+		'default_css'	=> ''
+	);
+
 	/**
 	 * Register widget with WordPress.
 	 */
@@ -47,17 +57,9 @@ class StatsFC_PlayerRater extends WP_Widget {
 	 * @param array $instance Previously saved values from database.
 	 */
 	public function form($instance) {
-		$defaults = array(
-			'title'			=> __('Player Rater', STATSFC_PLAYERRATER_ID),
-			'api_key'		=> __('', STATSFC_PLAYERRATER_ID),
-			'team'			=> __('', STATSFC_PLAYERRATER_ID),
-			'date'			=> __('', STATSFC_PLAYERRATER_ID),
-			'default_css'	=> __('', STATSFC_PLAYERRATER_ID)
-		);
-
-		$instance		= wp_parse_args((array) $instance, $defaults);
+		$instance		= wp_parse_args((array) $instance, self::$defaults);
 		$title			= strip_tags($instance['title']);
-		$api_key		= strip_tags($instance['api_key']);
+		$key			= strip_tags($instance['key']);
 		$team			= strip_tags($instance['team']);
 		$date			= strip_tags($instance['date']);
 		$default_css	= strip_tags($instance['default_css']);
@@ -70,8 +72,8 @@ class StatsFC_PlayerRater extends WP_Widget {
 		</p>
 		<p>
 			<label>
-				<?php _e('API key', STATSFC_PLAYERRATER_ID); ?>:
-				<input class="widefat" name="<?php echo $this->get_field_name('api_key'); ?>" type="text" value="<?php echo esc_attr($api_key); ?>">
+				<?php _e('Key', STATSFC_PLAYERRATER_ID); ?>:
+				<input class="widefat" name="<?php echo $this->get_field_name('key'); ?>" type="text" value="<?php echo esc_attr($key); ?>">
 			</label>
 		</p>
 		<p>
@@ -108,7 +110,7 @@ class StatsFC_PlayerRater extends WP_Widget {
 	public function update($new_instance, $old_instance) {
 		$instance					= $old_instance;
 		$instance['title']			= strip_tags($new_instance['title']);
-		$instance['api_key']		= strip_tags($new_instance['api_key']);
+		$instance['key']			= strip_tags($new_instance['key']);
 		$instance['team']			= strip_tags($new_instance['team']);
 		$instance['date']			= strip_tags($new_instance['date']);
 		$instance['default_css']	= strip_tags($new_instance['default_css']);
@@ -133,15 +135,15 @@ class StatsFC_PlayerRater extends WP_Widget {
 		$date			= $instance['date'];
 		$default_css	= $instance['default_css'];
 
-		echo $before_widget;
-		echo $before_title . $title . $after_title;
+		$html  = $before_widget;
+		$html .= $before_title . $title . $after_title;
 
 		try {
 			if (strlen($team) == 0) {
 				throw new Exception('Please choose a team from the widget options');
 			}
 
-			$data = $this->_fetchData('https://api.statsfc.com/crowdscores/player-rater.php?key=' . urlencode($api_key) . '&team=' . urlencode($team) . '&date=' . urlencode($date));
+			$data = $this->_fetchData('https://api.statsfc.com/crowdscores/player-rater.php?key=' . urlencode($key) . '&team=' . urlencode($team) . '&date=' . urlencode($date));
 
 			if (empty($data)) {
 				throw new Exception('There was an error connecting to the StatsFC API');
@@ -165,83 +167,86 @@ class StatsFC_PlayerRater extends WP_Widget {
 
 			wp_register_script(STATSFC_PLAYERRATER_ID . '-js', plugins_url('script.js', __FILE__), array('jquery'));
 			wp_enqueue_script(STATSFC_PLAYERRATER_ID . '-js');
-			?>
-			<div class="statsfc_playerrater" data-api-key="<?php echo esc_attr($api_key); ?>" data-match-id="<?php echo esc_attr($match->id); ?>" data-team-id="<?php echo esc_attr($team->id); ?>">
+
+			$key		= esc_attr($key);
+			$match_id	= esc_attr($match->id);
+			$team_id	= esc_attr($team->id);
+			$teamName	= esc_attr($team->name);
+			$against	= ($match->home == $team->name ? esc_attr($match->away) . ' (H)' : esc_attr($match->home) . ' (A)');
+
+			$html .= <<< HTML
+			<div class="statsfc_playerrater" data-api-key="{$key}" data-match-id="{$match_id}" data-team-id="{$team_id}">
 				<table>
 					<thead>
 						<tr>
-							<th colspan="5"><?php echo esc_attr($team->name); ?> vs <?php echo ($match->home == $team->name ? esc_attr($match->away) . ' (H)' : esc_attr($match->home) . ' (A)'); ?></th>
+							<th colspan="5">{$teamName} vs {$against}</th>
 						</tr>
 					</thead>
 					<tbody>
-						<?php
-						$cookie_id	= 'statsfc_playerrater_' . $api_key . '_' . $match->id . '_' . $team->id;
-						$cookie		= (isset($_COOKIE[$cookie_id]) ? json_decode(stripslashes($_COOKIE[$cookie_id])) : null);
+HTML;
 
-						foreach ($players as $player) {
-						?>
-							<tr data-player-id="<?php echo esc_attr($player->id); ?>">
-								<td class="statsfc_position">
-									<small class="statsfc_<?php echo esc_attr($player->position); ?>"><?php echo esc_attr($player->position); ?></small>
-								</td>
-								<td class="statsfc_numeric"><?php echo esc_attr($player->number); ?>.</td>
-								<td class="statsfc_player">
-									<?php
-									if ($player->motm) {
-										echo '<strong class="statsfc_motm">' . esc_attr($player->name) . '</strong>';
-									} else {
-										echo esc_attr($player->name);
-									}
-									?>
-								</td>
-								<td class="statsfc_numeric statsfc_rating">
-									<?php
-									if (! is_null($cookie)) {
-									?>
-										<span><?php echo esc_attr($cookie->{$player->id}); ?></span>
-									<?php
-									} else {
-									?>
-										<select data-player-id="<?php echo esc_attr($player->id); ?>">
-											<option value="">--</option>
-											<?php
-											for ($i = 1; $i <= 10; $i++) {
-												echo '<option value="' . $i . '">' . $i . '</option>' . PHP_EOL;
-											}
-											?>
-										</select>
-									<?php
-									}
-									?>
-								</td>
-								<td class="statsfc_numeric statsfc_average">
-									<strong><?php echo ($player->rating ? esc_attr($player->rating) : '–'); ?></strong>
-								</td>
-							</tr>
-						<?php
-						}
-						?>
+			$cookie_id	= 'statsfc_playerrater_' . $key . '_' . $match_id . '_' . $team_id;
+			$cookie		= (isset($_COOKIE[$cookie_id]) ? json_decode(stripslashes($_COOKIE[$cookie_id])) : null);
+
+			foreach ($players as $player) {
+				$player_id	= esc_attr($player->id);
+				$position	= esc_attr($player->position);
+				$number		= esc_attr($player->number);
+				$name		= ($player->motm ? '<strong class="statsfc_motm">' . esc_attr($player->name) . '</strong>' : esc_attr($player->name));
+				$rating		= '';
+				$average	= ($player->rating ? esc_attr($player->rating) : '–');
+				$submit		= '';
+
+				if (is_null($cookie)) {
+					$rating  = '<select data-player-id="' . $player_id . '">' . PHP_EOL;
+					$rating .= '<option value="">--</option>' . PHP_EOL;
+
+					for ($i = 1; $i <= 10; $i++) {
+						$rating .= '<option value="' . $i . '">' . $i . '</option>' . PHP_EOL;
+					}
+
+					$rating .= '</select>' . PHP_EOL;
+
+					$submit = '<p class="statsfc_submit"><input type="submit" value="Submit ratings"></p>' . PHP_EOL;
+				} else {
+					$rating = '<span>' . esc_attr($cookie->{$player->id}) . '</span>' . PHP_EOL;
+				}
+
+				$html .= <<< HTML
+				<tr data-player-id="{$player_id}">
+					<td class="statsfc_position">
+						<small class="statsfc_{$position}">{$position}</small>
+					</td>
+					<td class="statsfc_numeric">{$number}.</td>
+					<td class="statsfc_player">{$name}</td>
+					<td class="statsfc_numeric statsfc_rating">{$rating}</td>
+					<td class="statsfc_numeric statsfc_average">
+						<strong>{$average}</strong>
+					</td>
+				</tr>
+HTML;
+			}
+
+			$html .= <<< HTML
 					</tbody>
 				</table>
 
-				<?php
-				if (is_null($cookie)) {
-				?>
-					<p class="statsfc_submit">
-						<input type="submit" value="Submit ratings">
-					</p>
-				<?php
-				}
-				?>
+				{$submit}
 
 				<p class="statsfc_footer"><small>Powered by StatsFC.com. Fan data via CrowdScores.com</small></p>
 			</div>
-		<?php
+HTML;
 		} catch (Exception $e) {
-			echo '<p style="text-align: center;">StatsFC.com – ' . esc_attr($e->getMessage()) .'</p>' . PHP_EOL;
+			$html .= '<p style="text-align: center;">StatsFC.com – ' . esc_attr($e->getMessage()) . '</p>' . PHP_EOL;
 		}
 
-		echo $after_widget;
+		$html .= $after_widget;
+
+		if ($this->isShortcode) {
+			return $html;
+		} else {
+			echo $html;
+		}
 	}
 
 	private function _fetchData($url) {
@@ -276,7 +281,17 @@ class StatsFC_PlayerRater extends WP_Widget {
 	private function _fopenRequest($url) {
 		return file_get_contents($url);
 	}
+
+	public static function shortcode($atts) {
+		$args = shortcode_atts(self::$defaults, $atts);
+
+		$widget					= new self;
+		$widget->isShortcode	= true;
+
+		return $widget->widget(array(), $args);
+	}
 }
 
 // register StatsFC widget
 add_action('widgets_init', create_function('', 'register_widget("' . STATSFC_PLAYERRATER_ID . '");'));
+add_shortcode('statsfc-player-rater', STATSFC_PLAYERRATER_ID . '::shortcode');
