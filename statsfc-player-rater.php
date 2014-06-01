@@ -191,7 +191,7 @@ HTML;
 			foreach ($players as $player) {
 				$player_id	= esc_attr($player->id);
 				$position	= esc_attr($player->position);
-				$number		= esc_attr($player->number);
+				$number		= (! empty($player->number) ? esc_attr($player->number) . '.' : '');
 				$name		= ($player->motm ? '<strong class="statsfc_motm">' . esc_attr($player->name) . '</strong>' : esc_attr($player->name));
 				$rating		= '';
 				$average	= ($player->rating ? esc_attr($player->rating) : '–');
@@ -217,7 +217,7 @@ HTML;
 					<td class="statsfc_position">
 						<small class="statsfc_{$position}">{$position}</small>
 					</td>
-					<td class="statsfc_numeric">{$number}.</td>
+					<td class="statsfc_numeric">{$number}</td>
 					<td class="statsfc_player">{$name}</td>
 					<td class="statsfc_numeric statsfc_rating">{$rating}</td>
 					<td class="statsfc_numeric statsfc_average">
