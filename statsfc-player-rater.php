@@ -130,7 +130,7 @@ class StatsFC_PlayerRater extends WP_Widget {
 		extract($args);
 
 		$title			= apply_filters('widget_title', $instance['title']);
-		$api_key		= $instance['api_key'];
+		$key			= $instance['key'];
 		$team			= $instance['team'];
 		$date			= $instance['date'];
 		$default_css	= $instance['default_css'];
