@@ -3,8 +3,8 @@ Contributors: willjw
 Donate link:
 Tags: widget, football, soccer, player, rater, premier league, fa cup, league cup, champions league, europa league, uefa
 Requires at least: 3.3
-Tested up to: 3.9
-Stable tag: 1.2.2
+Tested up to: 4.0
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,8 @@ You can also use the `[statsfc-player-rater]` shortcode, with the following opti
 **1.2**: Added `[statsfc-player-rater]` shortcode.
 
 **1.2.2**: Default `default_css` parameter to `true`
+
+**1.2.3**: Use built-in WordPress HTTP API functions
 
 == Upgrade notice ==
 

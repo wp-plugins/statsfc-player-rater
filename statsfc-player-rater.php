@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Player Rater
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Player Rater
-Version: 1.2.2
+Version: 1.2.3
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -257,36 +257,9 @@ HTML;
 	}
 
 	private function _fetchData($url) {
-		if (function_exists('curl_exec')) {
-			return $this->_curlRequest($url);
-		} else {
-			return $this->_fopenRequest($url);
-		}
-	}
+		$response = wp_remote_get($url);
 
-	private function _curlRequest($url) {
-		$ch = curl_init();
-
-		curl_setopt_array($ch, array(
-			CURLOPT_AUTOREFERER		=> true,
-			CURLOPT_HEADER			=> false,
-			CURLOPT_RETURNTRANSFER	=> true,
-			CURLOPT_TIMEOUT			=> 5,
-			CURLOPT_URL				=> $url
-		));
-
-		$data = curl_exec($ch);
-		if (empty($data)) {
-			$data = $this->_fopenRequest($url);
-		}
-
-		curl_close($ch);
-
-		return $data;
-	}
-
-	private function _fopenRequest($url) {
-		return file_get_contents($url);
+		return wp_remote_retrieve_body($response);
 	}
 
 	public static function shortcode($atts) {
