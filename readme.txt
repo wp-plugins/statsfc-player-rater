@@ -4,7 +4,7 @@ Donate link:
 Tags: widget, football, soccer, player, rater, premier league, fa cup, league cup, champions league, europa league, uefa
 Requires at least: 3.3
 Tested up to: 4.0
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,7 @@ You can also use the `[statsfc-player-rater]` shortcode, with the following opti
 
 - `key` (required): Your StatsFC key
 - `team` (required): Team name, e.g., `Liverpool`
+- `competition` (optional): Competition key, e.g., `EPL`
 - `date` (optional): For a back-dated match, e.g., `2013-12-31`
 - `default_css` (optional): Use the default widget styles, `true` or `false`
 
@@ -53,6 +54,8 @@ You can also use the `[statsfc-player-rater]` shortcode, with the following opti
 **1.3**: Enabled ad-support
 
 **1.3.1**: Set a reasonable width for the drop-downs
+
+**1.3.2**: Added a `competition` parameter
 
 == Upgrade notice ==
 
