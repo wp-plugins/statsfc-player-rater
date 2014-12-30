@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Player Rater
 Plugin URI: https://statsfc.com/docs/wordpress
 Description: StatsFC Player Rater
-Version: 1.3.2
+Version: 1.4
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -227,17 +227,32 @@ HTML;
 			$cookie		= (isset($_COOKIE[$cookie_id]) ? json_decode(stripslashes($_COOKIE[$cookie_id])) : null);
 
 			foreach ($players as $player) {
-				$player_id	= esc_attr($player->id);
-				$position	= esc_attr($player->position);
-				$number		= (! empty($player->number) ? esc_attr($player->number) . '.' : '');
-				$name		= ($player->motm ? '<strong class="statsfc_motm">' . esc_attr($player->name) . '</strong>' : esc_attr($player->name));
-				$rating		= '';
-				$average	= ($player->rating ? esc_attr($player->rating) : '–');
-				$submit		= '';
+				$player_id = esc_attr($player->id);
+				$position  = esc_attr($player->position);
+				$number    = (! empty($player->number) ? esc_attr($player->number) . '.' : '');
+				$name      = esc_attr($player->name);
+				$rating    = '';
+				$average   = ($player->rating ? esc_attr($player->rating) : '–');
+				$submit    = '';
+
+				if ($player->on) {
+					$name .= ' <small>(<span class="statsfc_subOn">↑' . esc_attr($player->on) . '\'</span>';
+
+					if ($player->off) {
+						$name .= ', <span class="statsfc_subOff">↓' . esc_attr($player->off) . '\'</span>';
+					}
+
+					$name .= ')</small>';
+
+					$position = 'SB';
+				} elseif ($player->off) {
+					$name .= ' <small>(<span class="statsfc_subOff">↓' . esc_attr($player->off) . '\'</span>)</small>';
+				}
 
 				if (is_null($cookie)) {
 					$rating  = '<select data-player-id="' . $player_id . '">' . PHP_EOL;
 					$rating .= '<option value="">--</option>' . PHP_EOL;
+					$rating .= '<option>N/A</option>' . PHP_EOL;
 
 					for ($i = 1; $i <= 10; $i++) {
 						$rating .= '<option value="' . $i . '">' . $i . '</option>' . PHP_EOL;

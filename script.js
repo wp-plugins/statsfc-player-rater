@@ -12,7 +12,7 @@ $j(function() {
 			var id		= $j(this).attr('data-player-id');
 			var rating	= $j(this).val();
 
-			if (isNaN(rating) || rating < 1 || rating > 10) {
+			if (rating !== 'N/A' && (isNaN(rating) || rating < 1 || rating > 10)) {
 				error = true;
 				return;
 			}
@@ -58,10 +58,24 @@ $j(function() {
 
 				// Update average ratings.
 				$j.each(data.players, function(key, player) {
+					var name = player.name;
+
+					if (player.on) {
+						name += ' <small>(<span class="statsfc_subOn">↑' + player.on + '\'</span>';
+
+						if (player.off) {
+							name += ', <span class="statsfc_subOff">↓' + player.off + '\'</span>';
+						}
+
+						name += ')</small>';
+					} else if (player.off) {
+						name += ' <small>(<span class="statsfc_subOff">↓' + player.off + '\'</span>)</small>';
+					}
+
 					if (player.motm) {
-						var $player = $j('<strong>').addClass('statsfc_motm').text(player.name);
+						var $player = $j('<strong>').addClass('statsfc_motm').html(name);
 					} else {
-						var $player = player.name;
+						var $player = name;
 					}
 
 					$parent.find('tr[data-player-id="' + player.id + '"] .statsfc_player').empty().append(
