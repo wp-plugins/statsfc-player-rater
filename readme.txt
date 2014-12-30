@@ -14,7 +14,7 @@ This widget will place a player rater for all matches of any Premier League team
 
 Add a player rater for any Premier League team's matches to your WordPress website. To request an API key sign up for free at [statsfc.com](https://statsfc.com).
 
-For a demo, check out [wp.statsfc.com](http://wp.statsfc.com).
+For a demo, check out [wp.statsfc.com/player-rater/](http://wp.statsfc.com/player-rater/).
 
 == Installation ==
 
