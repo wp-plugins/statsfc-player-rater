@@ -1,7 +1,7 @@
 var $j = jQuery;
 
 $j(function() {
-	$j('.statsfc_submit input:submit').click(function(e) {
+	$j('.statsfc_playerrater .statsfc_submit input:submit').click(function(e) {
 		e.preventDefault();
 
 		var $parent	= $j(this).parents('.statsfc_playerrater');
