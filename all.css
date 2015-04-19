@@ -17,5 +17,4 @@
 .statsfc_playerrater .statsfc_rating select {	width: 5em; }
 .statsfc_playerrater .statsfc_rating span {		color: silver; }
 .statsfc_playerrater .statsfc_submit {			text-align: center; }
-.statsfc_playerrater .statsfc_ad {				display: block !important; text-align: center; margin-top: 10px; }
 .statsfc_playerrater .statsfc_footer {			display: block !important; text-align: right; }
