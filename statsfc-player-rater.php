@@ -177,7 +177,7 @@ class StatsFC_PlayerRater extends WP_Widget
         }
 
         // Enqueue base JS
-        wp_register_script(STATSFC_PLAYERRATER_ID . '-js', plugins_url('fixtures.js', __FILE__), array('jquery'), STATSFC_PLAYERRATER_VERSION, true);
+        wp_register_script(STATSFC_PLAYERRATER_ID . '-js', plugins_url('player-rater.js', __FILE__), array('jquery'), STATSFC_PLAYERRATER_VERSION, true);
         wp_enqueue_script(STATSFC_PLAYERRATER_ID . '-js');
 
         // Enqueue widget JS
