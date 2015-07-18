@@ -4,7 +4,7 @@ Donate link:
 Tags: widget, football, soccer, player, rater, premier league, fa cup, league cup, champions league, europa league, uefa
 Requires at least: 3.3
 Tested up to: 4.2.2
-Stable tag: 1.5
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,6 +62,8 @@ You can also use the `[statsfc-player-rater]` shortcode, with the following opti
 **1.4.2**: Allow more discrete ads for ad-supported accounts
 
 **1.5**: Converted to JS widget
+
+**1.5.1**: Fixed bug with multiple widgets on one page
 
 == Upgrade notice ==
 

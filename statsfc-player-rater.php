@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Player Rater
 Plugin URI: https://statsfc.com/widgets/player-rater
 Description: StatsFC Player Rater
-Version: 1.5
+Version: 1.5.1
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -27,7 +27,7 @@ License: GPL2
 
 define('STATSFC_PLAYERRATER_ID',      'StatsFC_PlayerRater');
 define('STATSFC_PLAYERRATER_NAME',    'StatsFC Player Rater');
-define('STATSFC_PLAYERRATER_VERSION', '1.5');
+define('STATSFC_PLAYERRATER_VERSION', '1.5.1');
 
 /**
  * Adds StatsFC widget.
@@ -183,26 +183,24 @@ class StatsFC_PlayerRater extends WP_Widget
         // Enqueue widget JS
         $object = 'statsfc_player_rater_' . $unique_id;
 
-        $GLOBALS['statsfc_player_rater_init']  = '<script>' . PHP_EOL;
-        $GLOBALS['statsfc_player_rater_init'] .= 'var ' . $object . ' = new StatsFC_PlayerRater(' . json_encode($key) . ');' . PHP_EOL;
-        $GLOBALS['statsfc_player_rater_init'] .= $object . '.referer = ' . json_encode($referer) . ';' . PHP_EOL;
+        $script  = '<script>' . PHP_EOL;
+        $script .= 'var ' . $object . ' = new StatsFC_PlayerRater(' . json_encode($key) . ');' . PHP_EOL;
+        $script .= $object . '.referer = ' . json_encode($referer) . ';' . PHP_EOL;
 
         foreach (static::$whitelist as $parameter) {
             if (! array_key_exists($parameter, $options)) {
                 continue;
             }
 
-            $GLOBALS['statsfc_player_rater_init'] .= $object . '.' . $parameter . ' = ' . json_encode($options[$parameter]) . ';' . PHP_EOL;
+            $script .= $object . '.' . $parameter . ' = ' . json_encode($options[$parameter]) . ';' . PHP_EOL;
         }
 
-        $GLOBALS['statsfc_player_rater_init'] .= $object . '.display("statsfc-player-rater-' . $unique_id . '");' . PHP_EOL;
-        $GLOBALS['statsfc_player_rater_init'] .= '</script>';
+        $script .= $object . '.display("statsfc-player-rater-' . $unique_id . '");' . PHP_EOL;
+        $script .= '</script>';
 
-        add_action('wp_print_footer_scripts', function()
+        add_action('wp_print_footer_scripts', function() use ($script)
         {
-            global $statsfc_player_rater_init;
-
-            echo $statsfc_player_rater_init;
+            echo $script;
         });
 
         if ($this->isShortcode) {
