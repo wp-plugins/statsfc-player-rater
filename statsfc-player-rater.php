@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: StatsFC Player Rater
-Plugin URI: https://statsfc.com/docs/wordpress
+Plugin URI: https://statsfc.com/widgets/player-rater
 Description: StatsFC Player Rater
-Version: 1.4.2
+Version: 1.5
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -25,306 +25,208 @@ License: GPL2
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-define('STATSFC_PLAYERRATER_ID',	'StatsFC_PlayerRater');
-define('STATSFC_PLAYERRATER_NAME',	'StatsFC Player Rater');
+define('STATSFC_PLAYERRATER_ID',      'StatsFC_PlayerRater');
+define('STATSFC_PLAYERRATER_NAME',    'StatsFC Player Rater');
+define('STATSFC_PLAYERRATER_VERSION', '1.5');
 
 /**
  * Adds StatsFC widget.
  */
-class StatsFC_PlayerRater extends WP_Widget {
-	public $isShortcode = false;
+class StatsFC_PlayerRater extends WP_Widget
+{
+    public $isShortcode = false;
 
-	private static $defaults = array(
-		'title'			=> '',
-		'key'			=> '',
-		'team'			=> '',
-		'competition'	=> '',
-		'date'			=> '',
-		'default_css'	=> true
-	);
+    protected static $count = 0;
 
-	/**
-	 * Register widget with WordPress.
-	 */
-	public function __construct() {
-		parent::__construct(STATSFC_PLAYERRATER_ID, STATSFC_PLAYERRATER_NAME, array('description' => 'StatsFC Player Rater'));
-	}
+    private static $defaults = array(
+        'title'       => '',
+        'key'         => '',
+        'team'        => '',
+        'competition' => '',
+        'date'        => '',
+        'default_css' => true
+    );
 
-	/**
-	 * Back-end widget form.
-	 *
-	 * @see WP_Widget::form()
-	 *
-	 * @param array $instance Previously saved values from database.
-	 */
-	public function form($instance) {
-		$instance		= wp_parse_args((array) $instance, self::$defaults);
-		$title			= strip_tags($instance['title']);
-		$key			= strip_tags($instance['key']);
-		$team			= strip_tags($instance['team']);
-		$competition	= strip_tags($instance['competition']);
-		$date			= strip_tags($instance['date']);
-		$default_css	= strip_tags($instance['default_css']);
-		?>
-		<p>
-			<label>
-				<?php _e('Title', STATSFC_PLAYERRATER_ID); ?>:
-				<input class="widefat" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>">
-			</label>
-		</p>
-		<p>
-			<label>
-				<?php _e('Key', STATSFC_PLAYERRATER_ID); ?>:
-				<input class="widefat" name="<?php echo $this->get_field_name('key'); ?>" type="text" value="<?php echo esc_attr($key); ?>">
-			</label>
-		</p>
-		<p>
-			<label>
-				<?php _e('Team', STATSFC_PLAYERRATER_ID); ?>:
-				<input class="widefat" name="<?php echo $this->get_field_name('team'); ?>" type="text" value="<?php echo esc_attr($team); ?>">
-			</label>
-		</p>
-		<p>
-			<label>
-				<?php _e('Competition', STATSFC_PLAYERRATER_ID); ?>:
-				<?php
-				try {
-					$data = $this->_fetchData('https://api.statsfc.com/crowdscores/competitions.php');
+    private static $whitelist = array(
+        'team',
+        'competition',
+        'date',
+        'season'
+    );
 
-					if (empty($data)) {
-						throw new Exception;
-					}
+    /**
+     * Register widget with WordPress.
+     */
+    public function __construct()
+    {
+        parent::__construct(STATSFC_PLAYERRATER_ID, STATSFC_PLAYERRATER_NAME, array('description' => 'StatsFC Player Rater'));
+    }
 
-					$json = json_decode($data);
+    /**
+     * Back-end widget form.
+     *
+     * @see WP_Widget::form()
+     *
+     * @param array $instance Previously saved values from database.
+     */
+    public function form($instance)
+    {
+        $instance    = wp_parse_args((array) $instance, self::$defaults);
+        $title       = strip_tags($instance['title']);
+        $key         = strip_tags($instance['key']);
+        $team        = strip_tags($instance['team']);
+        $competition = strip_tags($instance['competition']);
+        $date        = strip_tags($instance['date']);
+        $default_css = strip_tags($instance['default_css']);
+        ?>
+        <p>
+            <label>
+                <?php _e('Title', STATSFC_PLAYERRATER_ID); ?>
+                <input class="widefat" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>">
+            </label>
+        </p>
+        <p>
+            <label>
+                <?php _e('Key', STATSFC_PLAYERRATER_ID); ?>
+                <input class="widefat" name="<?php echo $this->get_field_name('key'); ?>" type="text" value="<?php echo esc_attr($key); ?>">
+            </label>
+        </p>
+        <p>
+            <label>
+                <?php _e('Team', STATSFC_PLAYERRATER_ID); ?>
+                <input class="widefat" name="<?php echo $this->get_field_name('team'); ?>" type="text" value="<?php echo esc_attr($team); ?>">
+            </label>
+        </p>
+        <p>
+            <label>
+                <?php _e('Competition', STATSFC_PLAYERRATER_ID); ?>
+                <input class="widefat" name="<?php echo $this->get_field_name('competition'); ?>" type="text" value="<?php echo esc_attr($competition); ?>">
+            </label>
+        </p>
+        <p>
+            <label>
+                <?php _e('Date (YYYY-MM-DD)', STATSFC_PLAYERRATER_ID); ?>
+                <input class="widefat" name="<?php echo $this->get_field_name('date'); ?>" type="text" value="<?php echo esc_attr($date); ?>" placeholder="YYYY-MM-DD">
+            </label>
+        </p>
+        <p>
+            <label>
+                <?php _e('Use default styles?', STATSFC_PLAYERRATER_ID); ?>
+                <input type="checkbox" name="<?php echo $this->get_field_name('default_css'); ?>"<?php echo ($default_css == 'on' ? ' checked' : ''); ?>>
+            </label>
+        </p>
+    <?php
+    }
 
-					if (isset($json->error)) {
-						throw new Exception;
-					}
-					?>
-					<select class="widefat" name="<?php echo $this->get_field_name('competition'); ?>">
-						<option value="">Any</option>
-						<?php
-						foreach ($json as $comp) {
-							echo '<option value="' . esc_attr($comp->key) . '"' . ($comp->key == $competition ? ' selected' : '') . '>' . esc_attr($comp->name) . '</option>' . PHP_EOL;
-						}
-						?>
-					</select>
-				<?php
-				} catch (Exception $e) {
-				?>
-					<input class="widefat" name="<?php echo $this->get_field_name('competition'); ?>" type="text" value="<?php echo esc_attr($competition); ?>">
-				<?php
-				}
-				?>
-			</label>
-		</p>
-		<p>
-			<label>
-				<?php _e('Date (YYYY-MM-DD)', STATSFC_PLAYERRATER_ID); ?>:
-				<input class="widefat" name="<?php echo $this->get_field_name('date'); ?>" type="text" value="<?php echo esc_attr($date); ?>" placeholder="YYYY-MM-DD">
-			</label>
-		</p>
-		<p>
-			<label>
-				<?php _e('Use default CSS?', STATSFC_PLAYERRATER_ID); ?>
-				<input type="checkbox" name="<?php echo $this->get_field_name('default_css'); ?>"<?php echo ($default_css == 'on' ? ' checked' : ''); ?>>
-			</label>
-		</p>
-	<?php
-	}
+    /**
+     * Sanitize widget form values as they are saved.
+     *
+     * @see WP_Widget::update()
+     *
+     * @param array $new_instance Values just sent to be saved.
+     * @param array $old_instance Previously saved values from database.
+     *
+     * @return array Updated safe values to be saved.
+     */
+    public function update($new_instance, $old_instance)
+    {
+        $instance                = $old_instance;
+        $instance['title']       = strip_tags($new_instance['title']);
+        $instance['key']         = strip_tags($new_instance['key']);
+        $instance['team']        = strip_tags($new_instance['team']);
+        $instance['competition'] = strip_tags($new_instance['competition']);
+        $instance['date']        = strip_tags($new_instance['date']);
+        $instance['default_css'] = strip_tags($new_instance['default_css']);
 
-	/**
-	 * Sanitize widget form values as they are saved.
-	 *
-	 * @see WP_Widget::update()
-	 *
-	 * @param array $new_instance Values just sent to be saved.
-	 * @param array $old_instance Previously saved values from database.
-	 *
-	 * @return array Updated safe values to be saved.
-	 */
-	public function update($new_instance, $old_instance) {
-		$instance					= $old_instance;
-		$instance['title']			= strip_tags($new_instance['title']);
-		$instance['key']			= strip_tags($new_instance['key']);
-		$instance['team']			= strip_tags($new_instance['team']);
-		$instance['competition']	= strip_tags($new_instance['competition']);
-		$instance['date']			= strip_tags($new_instance['date']);
-		$instance['default_css']	= strip_tags($new_instance['default_css']);
+        return $instance;
+    }
 
-		return $instance;
-	}
+    /**
+     * Front-end display of widget.
+     *
+     * @see WP_Widget::widget()
+     *
+     * @param array $args     Widget arguments.
+     * @param array $instance Saved values from database.
+     */
+    public function widget($args, $instance)
+    {
+        extract($args);
 
-	/**
-	 * Front-end display of widget.
-	 *
-	 * @see WP_Widget::widget()
-	 *
-	 * @param array $args     Widget arguments.
-	 * @param array $instance Saved values from database.
-	 */
-	public function widget($args, $instance) {
-		extract($args);
+        $title       = apply_filters('widget_title', $instance['title']);
+        $unique_id   = ++static::$count;
+        $key         = $instance['key'];
+        $referer     = (array_key_exists('HTTP_REFERER', $_SERVER) ? parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST) : '');
+        $default_css = filter_var($instance['default_css'], FILTER_VALIDATE_BOOLEAN);
 
-		$title			= apply_filters('widget_title', $instance['title']);
-		$key			= $instance['key'];
-		$team			= $instance['team'];
-		$competition	= $instance['competition'];
-		$date			= $instance['date'];
-		$default_css	= filter_var($instance['default_css'], FILTER_VALIDATE_BOOLEAN);
+        $options = array(
+            'team'        => $instance['team'],
+            'competition' => $instance['competition'],
+            'date'        => $instance['date']
+        );
 
-		$html  = $before_widget;
-		$html .= $before_title . $title . $after_title;
+        $html  = $before_widget;
+        $html .= $before_title . $title . $after_title;
+        $html .= '<div id="statsfc-player-rater-' . $unique_id . '"></div>' . PHP_EOL;
+        $html .= $after_widget;
 
-		try {
-			if (strlen($team) == 0) {
-				throw new Exception('Please choose a team from the widget options');
-			}
+        // Enqueue CSS
+        if ($default_css) {
+            wp_register_style(STATSFC_PLAYERRATER_ID . '-css', plugins_url('all.css', __FILE__), null, STATSFC_PLAYERRATER_VERSION);
+            wp_enqueue_style(STATSFC_PLAYERRATER_ID . '-css');
+        }
 
-			$data = $this->_fetchData('https://api.statsfc.com/crowdscores/player-rater.php?key=' . urlencode($key) . '&team=' . urlencode($team) . '&competition=' . urlencode($competition) . '&date=' . urlencode($date));
+        // Enqueue base JS
+        wp_register_script(STATSFC_PLAYERRATER_ID . '-js', plugins_url('fixtures.js', __FILE__), array('jquery'), STATSFC_PLAYERRATER_VERSION, true);
+        wp_enqueue_script(STATSFC_PLAYERRATER_ID . '-js');
 
-			if (empty($data)) {
-				throw new Exception('There was an error connecting to the StatsFC API');
-			}
+        // Enqueue widget JS
+        $object = 'statsfc_player_rater_' . $unique_id;
 
-			$json = json_decode($data);
+        $GLOBALS['statsfc_player_rater_init']  = '<script>' . PHP_EOL;
+        $GLOBALS['statsfc_player_rater_init'] .= 'var ' . $object . ' = new StatsFC_PlayerRater(' . json_encode($key) . ');' . PHP_EOL;
+        $GLOBALS['statsfc_player_rater_init'] .= $object . '.referer = ' . json_encode($referer) . ';' . PHP_EOL;
 
-			if (isset($json->error)) {
-				throw new Exception($json->error);
-			}
+        foreach (static::$whitelist as $parameter) {
+            if (! array_key_exists($parameter, $options)) {
+                continue;
+            }
 
-			$match		= $json->match;
-			$team		= $json->team;
-			$players	= $json->players;
-			$customer	= $json->customer;
+            $GLOBALS['statsfc_player_rater_init'] .= $object . '.' . $parameter . ' = ' . json_encode($options[$parameter]) . ';' . PHP_EOL;
+        }
 
-			if ($default_css) {
-				wp_register_style(STATSFC_PLAYERRATER_ID . '-css', plugins_url('all.css', __FILE__));
-				wp_enqueue_style(STATSFC_PLAYERRATER_ID . '-css');
-			}
+        $GLOBALS['statsfc_player_rater_init'] .= $object . '.display("statsfc-player-rater-' . $unique_id . '");' . PHP_EOL;
+        $GLOBALS['statsfc_player_rater_init'] .= '</script>';
 
-			wp_register_script(STATSFC_PLAYERRATER_ID . '-js', plugins_url('script.js', __FILE__), array('jquery'));
-			wp_enqueue_script(STATSFC_PLAYERRATER_ID . '-js');
+        add_action('wp_print_footer_scripts', function()
+        {
+            global $statsfc_player_rater_init;
 
-			$key		= esc_attr($key);
-			$match_id	= esc_attr($match->id);
-			$team_id	= esc_attr($team->id);
-			$teamName	= esc_attr($team->name);
-			$against	= ($match->home == $team->name ? esc_attr($match->away) . ' (H)' : esc_attr($match->home) . ' (A)');
+            echo $statsfc_player_rater_init;
+        });
 
-			$html .= <<< HTML
-			<div class="statsfc_playerrater" data-api-key="{$key}" data-match-id="{$match_id}" data-team-id="{$team_id}">
-				<table>
-					<thead>
-						<tr>
-							<th colspan="5">{$teamName} vs {$against}</th>
-						</tr>
-					</thead>
-					<tbody>
-HTML;
+        if ($this->isShortcode) {
+            return $html;
+        } else {
+            echo $html;
+        }
+    }
 
-			$cookie_id	= 'statsfc_playerrater_' . $key . '_' . $match_id . '_' . $team_id;
-			$cookie		= (isset($_COOKIE[$cookie_id]) ? json_decode(stripslashes($_COOKIE[$cookie_id])) : null);
+    public static function shortcode($atts)
+    {
+        $args = shortcode_atts(self::$defaults, $atts);
 
-			foreach ($players as $player) {
-				$player_id = esc_attr($player->id);
-				$position  = esc_attr($player->position);
-				$number    = (! empty($player->number) ? esc_attr($player->number) . '.' : '');
-				$name      = esc_attr($player->name);
-				$rating    = '';
-				$average   = ($player->rating ? esc_attr($player->rating) : '–');
-				$submit    = '';
+        $widget              = new self;
+        $widget->isShortcode = true;
 
-				if ($player->on) {
-					$name .= ' <small>(<span class="statsfc_subOn">↑' . esc_attr($player->on) . '\'</span>';
-
-					if ($player->off) {
-						$name .= ', <span class="statsfc_subOff">↓' . esc_attr($player->off) . '\'</span>';
-					}
-
-					$name .= ')</small>';
-
-					$position = 'SB';
-				} elseif ($player->off) {
-					$name .= ' <small>(<span class="statsfc_subOff">↓' . esc_attr($player->off) . '\'</span>)</small>';
-				}
-
-				if (is_null($cookie)) {
-					$rating  = '<select data-player-id="' . $player_id . '">' . PHP_EOL;
-					$rating .= '<option value="">--</option>' . PHP_EOL;
-					$rating .= '<option>N/A</option>' . PHP_EOL;
-
-					for ($i = 1; $i <= 10; $i++) {
-						$rating .= '<option value="' . $i . '">' . $i . '</option>' . PHP_EOL;
-					}
-
-					$rating .= '</select>' . PHP_EOL;
-
-					$submit = '<p class="statsfc_submit"><input type="submit" value="Submit ratings"></p>' . PHP_EOL;
-				} else {
-					$rating = '<span>' . esc_attr($cookie->{$player->id}) . '</span>' . PHP_EOL;
-				}
-
-				$html .= <<< HTML
-				<tr data-player-id="{$player_id}">
-					<td class="statsfc_position">
-						<small class="statsfc_{$position}">{$position}</small>
-					</td>
-					<td class="statsfc_numeric">{$number}</td>
-					<td class="statsfc_player">{$name}</td>
-					<td class="statsfc_numeric statsfc_rating">{$rating}</td>
-					<td class="statsfc_numeric statsfc_average">
-						<strong>{$average}</strong>
-					</td>
-				</tr>
-HTML;
-			}
-
-			$html .= <<< HTML
-					</tbody>
-				</table>
-
-				{$submit}
-HTML;
-
-			if ($customer->attribution) {
-				$html .= <<< HTML
-				<p class="statsfc_footer"><small>Powered by StatsFC.com. Fan data via CrowdScores.com</small></p>
-HTML;
-			}
-
-			$html .= <<< HTML
-			</div>
-HTML;
-		} catch (Exception $e) {
-			$html .= '<p style="text-align: center;">StatsFC.com – ' . esc_attr($e->getMessage()) . '</p>' . PHP_EOL;
-		}
-
-		$html .= $after_widget;
-
-		if ($this->isShortcode) {
-			return $html;
-		} else {
-			echo $html;
-		}
-	}
-
-	private function _fetchData($url) {
-		$response = wp_remote_get($url);
-
-		return wp_remote_retrieve_body($response);
-	}
-
-	public static function shortcode($atts) {
-		$args = shortcode_atts(self::$defaults, $atts);
-
-		$widget					= new self;
-		$widget->isShortcode	= true;
-
-		return $widget->widget(array(), $args);
-	}
+        return $widget->widget(array(), $args);
+    }
 }
 
-// register StatsFC widget
-add_action('widgets_init', create_function('', 'register_widget("' . STATSFC_PLAYERRATER_ID . '");'));
+// Register StatsFC widget
+add_action('widgets_init', function()
+{
+    register_widget(STATSFC_PLAYERRATER_ID);
+});
+
 add_shortcode('statsfc-player-rater', STATSFC_PLAYERRATER_ID . '::shortcode');

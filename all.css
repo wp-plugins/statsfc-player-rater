@@ -1,20 +1,20 @@
-.statsfc_playerrater table {					display: table; width: 100%; border-collapse: collapse; }
-.statsfc_playerrater th,
-.statsfc_playerrater td {						text-align: left; padding: 2px 5px; }
-.statsfc_playerrater thead th {					text-transform: uppercase; font-size: small; background-color: silver; }
-.statsfc_playerrater .statsfc_player {			width: 75%; }
-.statsfc_playerrater .statsfc_average {			padding-left: 10px; }
-.statsfc_playerrater .statsfc_numeric {			text-align: right; }
-.statsfc_playerrater .statsfc_position small {	display: inline-block; width: 3em; text-align: center; padding: 0px 4px; border-radius: 5px; color: #f8f8f8; }
-.statsfc_playerrater .statsfc_GK {				background-color: #47d; }
-.statsfc_playerrater .statsfc_DF {				background-color: #4b4; }
-.statsfc_playerrater .statsfc_MF {				background-color: #e83; }
-.statsfc_playerrater .statsfc_FW {				background-color: #e33; }
-.statsfc_playerrater .statsfc_SB {              background-color: #bbb; }
-.statsfc_playerrater .statsfc_subOff {          color: #e33; }
-.statsfc_playerrater .statsfc_subOn {           color: #4b4; }
-.statsfc_playerrater .statsfc_motm {			padding-right: 20px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADE0lEQVRYw2NgoABYWspwgjDDQAF5eflABQWFgAFzgKKi4hIgXjwglmtrM7Dp68j/A2FjYwbWgQh+rzAfyf+hPlL/gdHgQXcHAC2dO6+d7/+cNv7/wGiYRVfLHRwYWIz05f89PcT8//EBlv/GBvJ/GxgYmOjmACUlJZdAD6n//68zgLGvqzQoGuzp6YDpM5v54Q6YUi8AioaJdLEcFNTGBnJ/H+5jgTvgzi7W/xYmcn/+MzAw0iPv23o7S8Mth2FXexlQKJjRwwETJ9cJYDigt0rwPzBqOskxMAaocT4yjguWuI0Ng+RAKf7eHlYMB9zYzvbfBBg1hPQjY2DCDQfHKZDToKys+L8oWfT/6kk8ePHpNewYlsPwydUcBPXnJ4r9VwHaBfR4FUqaAZZsTkBHvJhQI/D/71UGnJaQi/9cgUSTioriU6DldjjKdwUJYGjsjQmU/P/6ODPVLH91jPl/pL8kyNe7lJXFxQhmM1CUmBnJ/T22goNiy48s5/hvbiwHKqjqSCot5eTknE0N5f5OrCUvSkB6QNEJjNbnwOh1JLPKBUfJPnCUHGMi2nKQWpAeUHQqKoqJU1zyAQ2akBUrRrQDMmPEQJZPoFoFBTSssj5PmGgHgNQC9VRQs/I5TUqCPApMeMAUf4palssBSz9wPiYlzwPbC/+lpKRkqdHyKShPF8Gw5M1xpv8FSWJALApmo8uXpYuCQiGXGiFweP8iThTDDy3lBFW/IAtaQRjEPrwMVc2eBVwg+f2U1nziwFbv/5+XIIb+uszwv61ECJi3lZ4AQ8YBqRh3BOb3px2lQmA1ILU/LjL+19dRAEWDCCXBnw4KZpCB9/aw/Pdzkwal7vUaGtLC6GpBYkAHb/R3l/r/YC+ksZITLwYKhWRKQmDX9jlc4FoMmBD/AS3PJEJPDkjt+qk8/zfP5AY5eAtZluvqygmqqCj9To0UBxlyGVg0a5OQbnSB+GpaFEiv4g91dRFecoI/HmgIKAinKCgwcJDTcQXqnQkyA2hWBFkdD6ABflTIRcFAPIOMikhGiHr9SNxmAQCk0CB/Ktk7oAAAAABJRU5ErkJggg==) no-repeat center right; background-size: 16px 16px; }
-.statsfc_playerrater .statsfc_rating select {	width: 5em; }
-.statsfc_playerrater .statsfc_rating span {		color: silver; }
-.statsfc_playerrater .statsfc_submit {			text-align: center; }
-.statsfc_playerrater .statsfc_footer {			display: block !important; text-align: right; }
+div.sfc_playerrater table {					display: table; width: 100%; border-collapse: collapse; }
+div.sfc_playerrater th,
+div.sfc_playerrater td {					text-align: left; padding: 2px 5px; }
+div.sfc_playerrater thead th {				text-transform: uppercase; font-size: small; background-color: silver; }
+div.sfc_playerrater .sfc_player {			width: 75%; }
+div.sfc_playerrater .sfc_average {			padding-left: 10px; }
+div.sfc_playerrater .sfc_numeric {			text-align: right; }
+div.sfc_playerrater .sfc_position small {	display: inline-block; width: 3em; text-align: center; padding: 0px 4px; border-radius: 5px; color: #f8f8f8; }
+div.sfc_playerrater .sfc_GK {				background-color: #47d; }
+div.sfc_playerrater .sfc_DF {				background-color: #4b4; }
+div.sfc_playerrater .sfc_MF {				background-color: #e83; }
+div.sfc_playerrater .sfc_FW {				background-color: #e33; }
+div.sfc_playerrater .sfc_SB {               background-color: #bbb; }
+div.sfc_playerrater .sfc_subOff {           color: #e33; }
+div.sfc_playerrater .sfc_subOn {            color: #4b4; }
+div.sfc_playerrater .sfc_motm {				padding-right: 20px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADE0lEQVRYw2NgoABYWspwgjDDQAF5eflABQWFgAFzgKKi4hIgXjwglmtrM7Dp68j/A2FjYwbWgQh+rzAfyf+hPlL/gdHgQXcHAC2dO6+d7/+cNv7/wGiYRVfLHRwYWIz05f89PcT8//EBlv/GBvJ/GxgYmOjmACUlJZdAD6n//68zgLGvqzQoGuzp6YDpM5v54Q6YUi8AioaJdLEcFNTGBnJ/H+5jgTvgzi7W/xYmcn/+MzAw0iPv23o7S8Mth2FXexlQKJjRwwETJ9cJYDigt0rwPzBqOskxMAaocT4yjguWuI0Ng+RAKf7eHlYMB9zYzvbfBBg1hPQjY2DCDQfHKZDToKys+L8oWfT/6kk8ePHpNewYlsPwydUcBPXnJ4r9VwHaBfR4FUqaAZZsTkBHvJhQI/D/71UGnJaQi/9cgUSTioriU6DldjjKdwUJYGjsjQmU/P/6ODPVLH91jPl/pL8kyNe7lJXFxQhmM1CUmBnJ/T22goNiy48s5/hvbiwHKqjqSCot5eTknE0N5f5OrCUvSkB6QNEJjNbnwOh1JLPKBUfJPnCUHGMi2nKQWpAeUHQqKoqJU1zyAQ2akBUrRrQDMmPEQJZPoFoFBTSssj5PmGgHgNQC9VRQs/I5TUqCPApMeMAUf4palssBSz9wPiYlzwPbC/+lpKRkqdHyKShPF8Gw5M1xpv8FSWJALApmo8uXpYuCQiGXGiFweP8iThTDDy3lBFW/IAtaQRjEPrwMVc2eBVwg+f2U1nziwFbv/5+XIIb+uszwv61ECJi3lZ4AQ8YBqRh3BOb3px2lQmA1ILU/LjL+19dRAEWDCCXBnw4KZpCB9/aw/Pdzkwal7vUaGtLC6GpBYkAHb/R3l/r/YC+ksZITLwYKhWRKQmDX9jlc4FoMmBD/AS3PJEJPDkjt+qk8/zfP5AY5eAtZluvqygmqqCj9To0UBxlyGVg0a5OQbnSB+GpaFEiv4g91dRFecoI/HmgIKAinKCgwcJDTcQXqnQkyA2hWBFkdD6ABflTIRcFAPIOMikhGiHr9SNxmAQCk0CB/Ktk7oAAAAABJRU5ErkJggg==) no-repeat center right; background-size: 16px 16px; }
+div.sfc_playerrater .sfc_rating select {	width: 5em; }
+div.sfc_playerrater .sfc_rating span {		color: silver; }
+div.sfc_playerrater .sfc_submit {			text-align: center; }
+div.sfc_playerrater div.sfc_footer {		display: block !important; text-align: right; }
