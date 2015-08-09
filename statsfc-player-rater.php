@@ -3,7 +3,7 @@
 Plugin Name: StatsFC Player Rater
 Plugin URI: https://statsfc.com/widgets/player-rater
 Description: StatsFC Player Rater
-Version: 1.5.1
+Version: 1.5.2
 Author: Will Woodward
 Author URI: http://willjw.co.uk
 License: GPL2
@@ -27,7 +27,7 @@ License: GPL2
 
 define('STATSFC_PLAYERRATER_ID',      'StatsFC_PlayerRater');
 define('STATSFC_PLAYERRATER_NAME',    'StatsFC Player Rater');
-define('STATSFC_PLAYERRATER_VERSION', '1.5.1');
+define('STATSFC_PLAYERRATER_VERSION', '1.5.2');
 
 /**
  * Adds StatsFC widget.
@@ -156,7 +156,7 @@ class StatsFC_PlayerRater extends WP_Widget
         $title       = apply_filters('widget_title', $instance['title']);
         $unique_id   = ++static::$count;
         $key         = $instance['key'];
-        $referer     = (array_key_exists('HTTP_REFERER', $_SERVER) ? parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST) : '');
+        $referer     = (array_key_exists('HTTP_HOST', $_SERVER) ? $_SERVER['HTTP_HOST'] : '');
         $default_css = filter_var($instance['default_css'], FILTER_VALIDATE_BOOLEAN);
 
         $options = array(
